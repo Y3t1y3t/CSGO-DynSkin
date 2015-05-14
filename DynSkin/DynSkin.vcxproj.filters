@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="HMain.h" />
+    <ClInclude Include="File\HFile.h">
+      <Filter>File</Filter>
+    </ClInclude>
+    <ClInclude Include="File\Valve\HValve.h">
+      <Filter>File\Valve</Filter>
+    </ClInclude>
+    <ClInclude Include="Skin\HSkins.h">
+      <Filter>Skins</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="File\File.cpp">
+      <Filter>File</Filter>
+    </ClCompile>
+    <ClCompile Include="File\Valve\Valve.cpp">
+      <Filter>File\Valve</Filter>
+    </ClCompile>
+    <ClCompile Include="Skin\Skins.cpp">
+      <Filter>Skins</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="File">
+      <UniqueIdentifier>{cb163512-68f2-4c11-a62a-37dcf7e8e1c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="File\Valve">
+      <UniqueIdentifier>{0ad40326-4160-490c-b462-99acd5f83e2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Skins">
+      <UniqueIdentifier>{a3b61df2-9d9a-4eee-8b95-896c40e79538}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
