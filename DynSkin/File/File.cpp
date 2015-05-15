@@ -14,17 +14,17 @@ namespace File
 	{
 	}
 
-	bool CFile::Load( const std::string& szPath, bool isunicode /* = false*/ )
+	bool CFile::Load( const std::string& path, bool isunicode /* = false*/ )
 	{
 
 		Release( );
 
-		if( GetFileAttributesA( szPath.c_str( ) ) == 0xFFFFFFFF )//sanity check
+		if( GetFileAttributesA( path.c_str( ) ) == 0xFFFFFFFF )//sanity check
 			return false;
 
-		_szPath = szPath;
+		_path = path;
 
-		std::ifstream ifs( _szPath, std::ios::binary | std::ios::ate );
+		std::ifstream ifs( _path, std::ios::binary | std::ios::ate );
 		std::ifstream::pos_type pos = ifs.tellg( );
 
 		vecFile tmp = vecFile( szPos( pos ) );
@@ -48,7 +48,7 @@ namespace File
 		if( !_file.empty( ) )
 			_file.clear( );
 
-		_szPath.clear( );
+		_path.clear( );
 	}
 
 	szPos CFile::FindFirstOf( const std::string& szSearch, szPos start, szPos end )

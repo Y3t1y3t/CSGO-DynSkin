@@ -36,14 +36,14 @@ namespace File
 
 	public:
 
-		bool									Load( const std::string& szPath, bool isunicode = false );
+		bool									Load( const std::string& path, bool isunicode = false );
 		void									Release( void );
 
 
 	public:
 
-		szPos									FindFirstOf( const std::string& szSearch, szPos start, szPos end );
-		vecPos									FindAllOf( const std::string& szSearch, szPos start, szPos end, vecPos pos = vecPos( ) );
+		szPos									FindFirstOf( const std::string& search, szPos start, szPos end );
+		vecPos									FindAllOf( const std::string& search, szPos start, szPos end, vecPos pos = vecPos( ) );
 		
 		std::string								GetStringAt( szPos start, szSize length );
 		std::string								GetStringBetween( szPos start, szPos end );
@@ -56,7 +56,7 @@ namespace File
 
 	public:
 
-		inline const std::string& const			GetPath( void )			{ return _szPath; }
+		inline const std::string& const			GetPath( void )			{ return _path; }
 		inline const vecFile& const				GetFile( void )			{ return _file; }
 		inline const szPos& const				GetFileSize( void )		{ return _file.size( ); }
 		inline const char& const				at( std::size_t p )		{ return _file.at( p ); }
@@ -76,7 +76,7 @@ namespace File
 
 	protected:
 
-		std::string								_szPath;	// filepath
+		std::string								_path;	// filepath
 
 		vecFile									_file;		// file std::binary | std::ate
 		CFile*									_instance;	// instance

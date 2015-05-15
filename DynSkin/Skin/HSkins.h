@@ -13,7 +13,6 @@ namespace Skins
 	struct SkinInfo_t
 	{
 
-
 		unsigned int	_id;			// index u know for what
 
 		std::string		_shortname;		// shortname
