@@ -4,121 +4,120 @@
 namespace File
 {
 
-	CFile::CFile( void )
-	{
+    CFile::CFile( void ) : _instance( this )
+    {
+    }
 
-		_instance = this;
-	}
+    CFile::~CFile( void )
+    {
+    }
 
-	CFile::~CFile( void )
-	{
-	}
+    bool CFile::Load( const std::string& path, bool isunicode /* = false*/ )
+    {
+        Release( );
 
-	bool CFile::Load( const std::string& path, bool isunicode /* = false*/ )
-	{
+        if( GetFileAttributesA( path.c_str( ) ) == 0xFFFFFFFF )//sanity check
+            return false;
 
-		Release( );
+        _path = path;
 
-		if( GetFileAttributesA( path.c_str( ) ) == 0xFFFFFFFF )//sanity check
-			return false;
 
-		_path = path;
+        std::ifstream ifs( _path, std::ios::binary | std::ios::ate );
+        auto pos = ifs.tellg( );
 
-		std::ifstream ifs( _path, std::ios::binary | std::ios::ate );
-		std::ifstream::pos_type pos = ifs.tellg( );
+        auto tmp = vecFile( szPos( pos ) );
 
-		vecFile tmp = vecFile( szPos( pos ) );
+        ifs.seekg( 0, std::ios::beg );
+        ifs.read( &tmp.at( 0 ), pos );
 
-		ifs.seekg( 0, std::ios::beg );
-		ifs.read( &tmp.at( 0 ), pos );
+        for( auto i = 0; i < 1000; ++i ) {
+            std::cout << tmp.at( i );
+        }
 
-		if( isunicode ){
-			for( unsigned int i = 0; i < pos; i += 2 )
-				_file.push_back( tmp.at( i ) );
-		}
-		else
-			_file = tmp;
+        if( isunicode ) {
+            for( unsigned int i = 0; i < pos; i += 2 ) {
+                _file.push_back( tmp.at( i ) );
+            }
+        }
+        else {
+            _file = tmp;
+        }
 
-		return Parse( );
-	}
+        return Parse( );
+    }
 
-	void CFile::Release( void )
-	{
+    void CFile::Release( void )
+    {
+        if( !_file.empty( ) )
+            _file.clear( );
 
-		if( !_file.empty( ) )
-			_file.clear( );
+        _path.clear( );
+    }
 
-		_path.clear( );
-	}
+    szPos CFile::FindFirstOf( const std::string& szSearch, szPos start, szPos end )
+    {
+        auto isInverse = bool( start > end );
 
-	szPos CFile::FindFirstOf( const std::string& szSearch, szPos start, szPos end )
-	{
+        if( _file.size( ) <= ( isInverse ? start : end ) )
+            return _file.size( );
 
-		bool isInverse = bool( start > end );
+        if( isInverse ) {
+            for( auto r = start; r > end; --r ) {
+                if( CompareBytes( static_cast< char* >( &_file.at( r ) ), const_cast< char* >( &szSearch.at( 0 ) ) ) )
+                    return r;
+            }
+        }
+        else {
+            for( auto r = start; r < end; ++r ) {
+                if( CompareBytes( static_cast< char* >( &_file.at( r ) ), const_cast< char* >( &szSearch.at( 0 ) ) ) )
+                    return r;
+            }
+        }
 
-		if( _file.size( ) <= ( isInverse ? start : end ) )
-			return _file.size( );
+        return _file.size( );
+    }
 
-		if( isInverse ){
-			for( szPos r = start; r > end; --r ){
-				if( CompareBytes( ( char* ) &_file.at( r ), ( char* ) &szSearch.at( 0 ) ) )
-					return r;
-			}
-		}
-		else{
-			for( szPos r = start; r < end; ++r ){
-				if( CompareBytes( ( char* ) &_file.at( r ), ( char* ) &szSearch.at( 0 ) ) )
-					return r;
-			}
-		}
+    vecPos CFile::FindAllOf( const std::string& szSearch, szPos start, szPos end, vecPos pos /*= vecPos( )*/ )
+    {
+        auto isInverse = bool( start > end );
 
-		return _file.size( );
-	}
+        if( _file.size( ) <= ( isInverse ? start : end ) )
+            return pos;
 
-	vecPos CFile::FindAllOf( const std::string& szSearch, szPos start, szPos end, vecPos pos /*= vecPos( )*/ )
-	{
+        if( isInverse ) {
+            for( auto r = start; r > end; --r ) {
+                if( CompareBytes( static_cast< char* >( &_file.at( r ) ), const_cast< char* >( &szSearch.at( 0 ) ) ) )
+                    pos.push_back( r );
+            }
+        }
+        else {
+            for( auto r = start; r < end; ++r ) {
+                if( CompareBytes( static_cast< char* >( &_file.at( r ) ), const_cast< char* >( &szSearch.at( 0 ) ) ) )
+                    pos.push_back( r );
+            }
+        }
 
-		bool isInverse = bool( start > end );
+        return pos;
+    }
 
-		if( _file.size( ) <= ( isInverse ? start : end ) )
-			return pos;
+    std::string CFile::GetStringAt( szPos start, szSize length )
+    {
+        if( _file.size( ) <= ( start + length ) )
+            return std::string( "" );
 
-		if( isInverse ){
-			for( szPos r = start; r > end; --r ){
-				if( CompareBytes( ( char* ) &_file.at( r ), ( char* ) &szSearch.at( 0 ) ) )
-					pos.push_back( r );
-			}
-		}
-		else{
-			for( szPos r = start; r < end; ++r ){
-				if( CompareBytes( ( char* ) &_file.at( r ), ( char* ) &szSearch.at( 0 ) ) )
-					pos.push_back( r );
-			}
-		}
+        return std::string( static_cast< char* >( &_file.at( start ) ), length );
+    }
 
-		return pos;
-	}
+    std::string CFile::GetStringBetween( szPos start, szPos end )
+    {
+        auto isInverse = bool( start > end );
 
-	std::string CFile::GetStringAt( szPos start, szSize length )
-	{
+        if( _file.size( ) <= ( isInverse ? start : end ) )
+            return std::string( "" );
 
-		if( _file.size( ) <= ( start + length ) )
-			return std::string( "" );
+        auto rstart = isInverse ? end : start;
+        auto rend = isInverse ? start : end;
 
-		return std::string( ( char* ) &_file.at( start ), length );
-	}
-
-	std::string CFile::GetStringBetween( szPos start, szPos end )
-	{
-
-		bool isInverse = bool( start > end );
-
-		if( _file.size( ) <= ( isInverse ? start : end ) )
-			return std::string( "" );
-
-		szPos rstart = isInverse ? end : start;
-		szPos rend = isInverse ? start : end;
-
-		return std::string( ( char* ) &_file.at( rstart ), szPos( rend - rstart ) );
-	}
+        return std::string( static_cast< char* >( &_file.at( rstart ) ), szPos( rend - rstart ) );
+    }
 }

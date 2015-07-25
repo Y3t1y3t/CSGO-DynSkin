@@ -2,13 +2,12 @@
 
 int main( )
 {
+    auto pSkins = new Skins::CSkins( );
+    if( pSkins->Load( "..\Counter-Strike: Global Offensive", "csgo" ) ) {
+        pSkins->Dump( std::ofstream( "C:\\skins.txt" ) );
+    }
 
-	Skins::CSkins* pSkins = new Skins::CSkins( );
-	if( pSkins->Load( ) ){
-		pSkins->Dump( std::ofstream("C:\\skins.txt") );
-	}
+    delete pSkins;
 
-	delete pSkins;
-
-	system( "pause" );
+    system( "pause" );
 }

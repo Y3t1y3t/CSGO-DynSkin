@@ -20,67 +20,68 @@
 namespace File
 {
 
-	typedef unsigned int szPos;
-	typedef szPos		 szSize;
+    typedef unsigned int szPos;
+    typedef szPos		 szSize;
 
-	typedef std::vector< szPos > vecPos;
-	typedef std::vector< char >	 vecFile;
+    typedef std::vector< szPos > vecPos;
+    typedef std::vector< char >	 vecFile;
 
-	class CFile
-	{
-	public:
+    class CFile
+    {
+    public:
 
-												CFile( void );
-												~CFile( void );
-
-
-	public:
-
-		bool									Load( const std::string& path, bool isunicode = false );
-		void									Release( void );
+                                                CFile( void );
+                                                ~CFile( void );
 
 
-	public:
+    public:
 
-		szPos									FindFirstOf( const std::string& search, szPos start, szPos end );
-		vecPos									FindAllOf( const std::string& search, szPos start, szPos end, vecPos pos = vecPos( ) );
-		
-		std::string								GetStringAt( szPos start, szSize length );
-		std::string								GetStringBetween( szPos start, szPos end );
+        bool									Load( const std::string& path, bool isunicode = false );
+        void									Release( void );
 
 
-	private:
+    public:
 
-		virtual bool							Parse( void ) = 0;
+        szPos									FindFirstOf( const std::string& search, szPos start, szPos end );
+        vecPos									FindAllOf( const std::string& search, szPos start, szPos end, vecPos pos = vecPos( ) );
 
-
-	public:
-
-		inline const std::string& const			GetPath( void )			{ return _path; }
-		inline const vecFile& const				GetFile( void )			{ return _file; }
-		inline const szPos& const				GetFileSize( void )		{ return _file.size( ); }
-		inline const char& const				at( std::size_t p )		{ return _file.at( p ); }
+        std::string								GetStringAt( szPos start, szSize length );
+        std::string								GetStringBetween( szPos start, szPos end );
 
 
-	private:
+    private:
 
-		inline bool								CompareBytes( char* pszData, const char* pszPattern ){
-			for( int i = 0; *pszPattern; ++pszPattern, ++i ){
-				if( pszData[ i ] != *pszPattern ){
-					return false;
-				}
-			}
-			return true;
-		}
+        virtual bool							Parse( void ) = 0;
 
 
-	protected:
+    public:
 
-		std::string								_path;	// filepath
+        inline const std::string& const			GetPath( void ) { return _path; }
+        inline const vecFile& const				GetFile( void ) { return _file; }
+        inline const szPos& const				GetFileSize( void ) { return _file.size( ); }
+        inline const char& const				at( std::size_t p ) { return _file.at( p ); }
 
-		vecFile									_file;		// file std::binary | std::ate
-		CFile*									_instance;	// instance
-	};
+
+    private:
+
+        inline bool								CompareBytes( char* pszData, const char* pszPattern )
+        {
+            for( int i = 0; *pszPattern; ++pszPattern, ++i ) {
+                if( pszData[ i ] != *pszPattern ) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+
+    protected:
+
+        std::string								_path;	// filepath
+
+        vecFile									_file;		// file std::binary | std::ate
+        CFile*									_instance;	// instance
+    };
 }
 
 #pragma warning(default : 4227)

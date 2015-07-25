@@ -10,56 +10,57 @@
 namespace Skins
 {
 
-	struct SkinInfo_t
-	{
+    struct SkinInfo_t
+    {
 
-		unsigned int	_id;			// index u know for what
+        unsigned int	_id;			// index u know for what
 
-		std::string		_shortname;		// shortname
-		std::string		_name;			// full skin name
-	};
+        std::string		_shortname;		// shortname
+        std::string		_name;			// full skin name
+    };
 
-	typedef std::vector< SkinInfo_t >						vecSkinInfo;
-	typedef std::unordered_map< std::string, vecSkinInfo >	mapSkinInfo;
+    typedef std::vector< SkinInfo_t >						vecSkinInfo;
+    typedef std::unordered_map< std::string, vecSkinInfo >	mapSkinInfo;
 
-	class CSkins
-	{
+    class CSkins
+    {
 
-	public:
+    public:
 
-												CSkins( void );
-												~CSkins( void );
-
-
-	public:
-
-		bool									Load( void );
-		void									Release( void );
+                                                CSkins( void );
+                                                ~CSkins( void );
 
 
-	public:
+    public:
 
-		void									Dump( std::ofstream& dump );
+        bool									Load( const std::string& gamePath, const std::string& gameShortName );
+        void									Release( void );
 
 
-	public:
+    public:
 
-		inline const mapSkinInfo& const			GetSkinInfo( void )								{ return _skininfo; }
-		inline const vecSkinInfo& const			GetSkinInfoByWeapon( const std::string& weapon ){
-			auto& ret = _skininfo.find( weapon );
-			if( ret != _skininfo.end( ) )
-				return ret->second;
-			return vecSkinInfo( );
-		}
-		
+        void									Dump( std::ofstream& dump );
 
-	protected:
 
-		File::Valve::CConfig*					_items_game = 0;	// config file by valve
-		File::Valve::CConfig*					_csgo_english = 0;	// config file by valve
+    public:
 
-		mapSkinInfo								_skininfo;			// Holds Skinsinformation
-	};
+        inline const mapSkinInfo& const			GetSkinInfo( void ) { return _skininfo; }
+        inline const vecSkinInfo& const			GetSkinInfoByWeapon( const std::string& weapon )
+        {
+            auto& ret = _skininfo.find( weapon );
+            if( ret != _skininfo.end( ) )
+                return ret->second;
+            return vecSkinInfo( );
+        }
+
+
+    protected:
+
+        File::Valve::CConfig*					_items_game = 0;	// config file by valve
+        File::Valve::CConfig*					_csgo_english = 0;	// config file by valve
+
+        mapSkinInfo								_skininfo;			// Holds Skinsinformation
+    };
 }
 
 #pragma warning(default : 4227)

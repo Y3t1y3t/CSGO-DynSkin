@@ -10,60 +10,60 @@
 namespace File
 {
 
-	namespace Valve
-	{
+    namespace Valve
+    {
 
-		class CLevel;
+        class CLevel;
 
-		typedef std::unordered_map< std::string, CLevel* >		mapLevel;
-		typedef std::unordered_map< std::string, std::string >	mapVariable;
+        typedef std::unordered_map< std::string, CLevel* >		mapLevel;
+        typedef std::unordered_map< std::string, std::string >	mapVariable;
 
-		class CLevel
-		{
-		public:
+        class CLevel
+        {
+        public:
 
-												CLevel( szPos& start, CFile* file );
-												~CLevel( void );
-
-
-		public:
-
-			inline const mapLevel& const		GetSubLevels( void )			{ return _sublevels; }
-			inline const mapVariable& const		GetVariables( void )			{ return _variables; }
+                                                CLevel( szPos& start, CFile* file );
+                                                ~CLevel( void );
 
 
-		protected:
+        public:
 
-			szPos								_start = 0;			// abs. pos start
-			szPos								_end = 0;			// abs. pos end
-
-			mapLevel							_sublevels;			// Sublevel
-			mapVariable							_variables;			// Variables
-		};
-
-		class CConfig : public CFile
-		{
-		public:
-
-												CConfig( void );
-												~CConfig( void );
+            inline const mapLevel& const		GetSubLevels( void ) { return _sublevels; }
+            inline const mapVariable& const		GetVariables( void ) { return _variables; }
 
 
-		private:
+        protected:
 
-			bool								Parse( void );
+            szPos								_start = 0;			// abs. pos start
+            szPos								_end = 0;			// abs. pos end
+
+            mapLevel							_sublevels;			// Sublevel
+            mapVariable							_variables;			// Variables
+        };
+
+        class CConfig : public CFile
+        {
+        public:
+
+            CConfig( void );
+            ~CConfig( void );
 
 
-		public:
+        private:
 
-			inline CLevel*						GetLevel( void )				{ return _level; }
+            bool								Parse( void );
 
 
-		protected:
+        public:
 
-			CLevel*								_level = 0;			// Level
-		};
-	}
+            inline CLevel*						GetLevel( void ) { return _level; }
+
+
+        protected:
+
+            CLevel*								_level = 0;			// Level
+        };
+    }
 }
 
 #pragma warning(default : 4227)

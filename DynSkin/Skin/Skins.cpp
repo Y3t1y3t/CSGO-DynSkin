@@ -2,91 +2,86 @@
 
 namespace Skins
 {
+    CSkins::CSkins( void )
+    {
+    }
 
+    CSkins::~CSkins( void )
+    {
+        delete _items_game;
+        delete _csgo_english;
+    }
 
-	CSkins::CSkins( void )
-	{
-	}
-	CSkins::~CSkins( void )
-	{
+    bool CSkins::Load( const std::string& gamePath, const std::string& gameShortName )
+    {
+        Release( );
 
-		delete _items_game;
-		delete _csgo_english;
-	}
+        _items_game = new File::Valve::CConfig( );
+        if( !_items_game->Load( gamePath + "/scripts/items/items_game.txt", false ) )
+            return false;
 
-	bool CSkins::Load( void )
-	{
-		
-		Release( );
+        _csgo_english = new File::Valve::CConfig( );
+        if( !_csgo_english->Load( gamePath + "/resource/" + gameShortName + "_english.txt", true ) )
+            return false;
 
-		_items_game = new File::Valve::CConfig( );
-		if( !_items_game->Load( "F:/Steam/SteamApps/common/Counter-Strike Global Offensive/csgo/scripts/items/items_game.txt", false ) )
-			return false;
+        auto& vt = _csgo_english->GetLevel( )->GetSubLevels( ).at( "Tokens" )->GetVariables( );
+        auto& ai_wi = _items_game->GetLevel( )->GetSubLevels( ).at( "alternate_icons2" )->GetSubLevels( ).at( "weapon_icons" )->GetSubLevels( );
 
-		_csgo_english = new File::Valve::CConfig( );
-		if( !_csgo_english->Load( "F:/Steam/SteamApps/common/Counter-Strike Global Offensive/csgo/resource/csgo_english.txt", true ) )
-			return false;
+        for( auto& pk : _items_game->GetLevel( )->GetSubLevels( ).at( "paint_kits" )->GetSubLevels( ) ) {
 
-		auto& vt = _csgo_english->GetLevel( )->GetSubLevels( ).at( "Tokens" )->GetVariables( );
-		auto& ai_wi = _items_game->GetLevel( )->GetSubLevels( ).at( "alternate_icons2" )->GetSubLevels( ).at( "weapon_icons" )->GetSubLevels( );
+            auto& pkid = pk.first;
 
-		for( auto& pk : _items_game->GetLevel( )->GetSubLevels( ).at( "paint_kits" )->GetSubLevels( ) )
-		{
+            if( pkid == "9001" )
+                continue;
 
-			auto& pkid = pk.first;
+            auto& pkname = pk.second->GetVariables( ).at( "name" );
+            auto& pkdesctag = std::string( pk.second->GetVariables( ).at( "description_tag" ) );
 
-			if( pkid == "9001" )
-				continue;
+            auto& res = vt.find( pkdesctag.substr( 1, pkdesctag.size( ) + 1 ) );
+            if( res == vt.end( ) ) {
 
-			auto& pkname = pk.second->GetVariables( ).at( "name" );
-			auto& pkdesctag = std::string( pk.second->GetVariables( ).at( "description_tag" ) );
+                pkdesctag[ 6 ] = 'k';//FUCK IT DAMN VALVE L2SPELL FFS
+                res = vt.find( pkdesctag.substr( 1, pkdesctag.size( ) + 1 ) );
+                if( res == vt.end( ) )
+                    continue;
+            }
 
-			auto& res = vt.find( pkdesctag.substr( 1, pkdesctag.size( ) + 1 ) );
-			if( res == vt.end( ) ){
+            auto& skname = res->second;
+            if( skname == "-" )
+                continue;
 
-				pkdesctag[ 6 ] = 'k';//FUCK IT DAMN VALVE L2SPELL FFS
-				res = vt.find( pkdesctag.substr( 1, pkdesctag.size( ) + 1 ) );
-				if( res == vt.end( ) )
-					continue;
-			}
+            for( auto& wi : ai_wi ) {
 
-			auto& skname = res->second;
-			if( skname == "-" )
-				continue;
+                auto& vip = wi.second->GetVariables( ).at( "icon_path" );
+                if( vip[ vip.size( ) - 7 ] != '_' )
+                    continue;
 
-			for( auto& wi : ai_wi ){
+                auto res = vip.find( pkname );
+                if( res == std::string::npos )
+                    continue;
 
-				auto& vip = wi.second->GetVariables( ).at( "icon_path" );
-				if( vip[ vip.size( ) - 7 ] != '_' )
-					continue;
+                _skininfo[ vip.substr( 23, res - 24 ) ].push_back( { atoi( pkid.c_str( ) ), pkname, skname } );
+            }
+        }
 
-				auto res = vip.find( pkname );
-				if( res == std::string::npos )
-					continue;
+        return true;
+    }
+    void CSkins::Release( void )
+    {
 
-				_skininfo[ vip.substr( 23, res - 24 ) ].push_back( { atoi( pkid.c_str( ) ), pkname, skname } );
-			}
-		}
+        if( _items_game )
+            _items_game->Release( );
+        if( _csgo_english )
+            _csgo_english->Release( );
+    }
 
-		return true;
-	}
-	void CSkins::Release( void )
-	{
-
-		if( _items_game )
-			_items_game->Release( );
-		if( _csgo_english )
-			_csgo_english->Release( );
-	}
-
-	void CSkins::Dump( std::ofstream& dump )
-	{
-
-		for( auto& w : _skininfo ){
-			dump << "[ " << w.first.c_str() << " ]" << std::endl;
-			for( auto& s : w.second ){
-				dump << " -> " << s._name.c_str( ) << " | " << s._shortname.c_str( ) << " | " << "[" << s._id << "]" << std::endl;
-			}
-		}
-	}
+    void CSkins::Dump( std::ofstream& dump )
+    {
+        for( auto& w : _skininfo ) {
+            dump << "[ " << w.first.c_str( ) << " ]" << std::endl;
+            for( auto& s : w.second ) {
+                dump << " -> " << s._name.c_str( ) << " | " << s._shortname.c_str( ) << " | " << "[" << s._id << "]" << std::endl;
+            }
+        }
+    }
 }
