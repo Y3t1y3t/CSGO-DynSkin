@@ -3,7 +3,6 @@
 
 namespace File
 {
-
     CFile::CFile( void ) : _instance( this )
     {
     }
@@ -20,7 +19,6 @@ namespace File
             return false;
 
         _path = path;
-
 
         std::ifstream ifs( _path, std::ios::binary | std::ios::ate );
         auto pos = ifs.tellg( );
@@ -48,8 +46,9 @@ namespace File
 
     void CFile::Release( void )
     {
-        if( !_file.empty( ) )
+        if( !_file.empty( ) ) {
             _file.clear( );
+        }
 
         _path.clear( );
     }

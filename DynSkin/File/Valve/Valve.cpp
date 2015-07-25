@@ -2,10 +2,8 @@
 
 namespace File
 {
-
     namespace Valve
     {
-
         CLevel::CLevel( szPos& start, CFile* file ) :
             _start( start ),
             _end( 0 )
@@ -16,8 +14,7 @@ namespace File
             unsigned int qcount = 0;
 
             for( ++start; start < size; ++start ) {
-
-                const char& p = file->at( start );
+                const auto& p = file->at( start );
                 if( p == '\"' ) {
                     if( qcount < 4 )
                         vpos[ qcount ] = start;
@@ -30,7 +27,6 @@ namespace File
                 }
                 else if( qcount != 1 && qcount != 3 ) {
                     if( p == '{' ) {
-
                         vpos[ 0 ] = file->FindFirstOf( "\"", start, 0 ) - 1;
                         vpos[ 1 ] = file->FindFirstOf( "\"", vpos[ 0 ], 0 );
 
@@ -40,15 +36,14 @@ namespace File
                         break;
                 }
             }
-
             _end = start;
         }
 
         CLevel::~CLevel( void )
         {
-
-            for( auto&p : _sublevels )
+            for( auto& p : _sublevels ) {
                 delete p.second;
+            }
         }
 
         CConfig::CConfig( void ) : CFile( )

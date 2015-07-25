@@ -28,7 +28,6 @@ namespace Skins
         auto& ai_wi = _items_game->GetLevel( )->GetSubLevels( ).at( "alternate_icons2" )->GetSubLevels( ).at( "weapon_icons" )->GetSubLevels( );
 
         for( auto& pk : _items_game->GetLevel( )->GetSubLevels( ).at( "paint_kits" )->GetSubLevels( ) ) {
-
             auto& pkid = pk.first;
 
             if( pkid == "9001" )
@@ -39,7 +38,6 @@ namespace Skins
 
             auto& res = vt.find( pkdesctag.substr( 1, pkdesctag.size( ) + 1 ) );
             if( res == vt.end( ) ) {
-
                 pkdesctag[ 6 ] = 'k';//FUCK IT DAMN VALVE L2SPELL FFS
                 res = vt.find( pkdesctag.substr( 1, pkdesctag.size( ) + 1 ) );
                 if( res == vt.end( ) )
@@ -51,7 +49,6 @@ namespace Skins
                 continue;
 
             for( auto& wi : ai_wi ) {
-
                 auto& vip = wi.second->GetVariables( ).at( "icon_path" );
                 if( vip[ vip.size( ) - 7 ] != '_' )
                     continue;
@@ -66,9 +63,9 @@ namespace Skins
 
         return true;
     }
+
     void CSkins::Release( void )
     {
-
         if( _items_game )
             _items_game->Release( );
         if( _csgo_english )

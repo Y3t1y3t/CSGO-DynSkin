@@ -8,6 +8,5 @@ int main( )
     }
 
     delete pSkins;
-
     system( "pause" );
 }
